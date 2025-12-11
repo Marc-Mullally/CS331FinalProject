@@ -251,8 +251,14 @@ def AvailableCars():
         
         con = mysql.connect()
         cur = con.cursor()
-        
-        cur.execute("SELECT CAR.CarID, CAR.LicensePlateNumber, CAR.Model, CAR.Brand, CAR.Category, CAR.YearOfManufacture, CAR.RentalStatus,RENTAL_BRANCH.City, RENTAL_BRANCH.State, RENTAL_BRANCH.Zip_Code, RENTAL_BRANCH.Street_Address FROM CAR JOIN RENTAL_BRANCH ON CAR.BranchID = RENTAL_BRANCH.BranchID")
+
+        search = request.args.get('search', '')
+
+        if search:
+            cur.execute("SELECT CAR.CarID, CAR.LicensePlateNumber, CAR.Model, CAR.Brand, CAR.Category, CAR.YearOfManufacture, CAR.RentalStatus,RENTAL_BRANCH.City, RENTAL_BRANCH.State, RENTAL_BRANCH.Zip_Code, RENTAL_BRANCH.Street_Address FROM CAR JOIN RENTAL_BRANCH ON CAR.BranchID = RENTAL_BRANCH.BranchID WHERE CAR.Brand LIKE %s OR CAR.Model LIKE %s OR CAR.Category LIKE %s", (search, search, search))
+        else:
+            cur.execute("SELECT CAR.CarID, CAR.LicensePlateNumber, CAR.Model, CAR.Brand, CAR.Category, CAR.YearOfManufacture, CAR.RentalStatus,RENTAL_BRANCH.City, RENTAL_BRANCH.State, RENTAL_BRANCH.Zip_Code, RENTAL_BRANCH.Street_Address FROM CAR JOIN RENTAL_BRANCH ON CAR.BranchID = RENTAL_BRANCH.BranchID")
+    
         data = cur.fetchall()
         cur.close()
         con.close()
